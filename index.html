@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Automatic Ramp — A Meditation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&amp;family=Playfair+Display:wght@700&amp;display=swap');
+  
+  body {
+    margin: 0;
+    background: #0a0f1e;
+    color: #e2e8f0;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 1100px;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -1.5px;
+  }
+  
+  .subtitle {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+  }
+  
+  canvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+  }
+  
+  .controls {
+    margin-top: 30px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e2e8f0;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  button:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3);
+  }
+  
+  .phase {
+    margin-top: 20px;
+    font-size: 15px;
+    color: #cbd5e1;
+    min-height: 24px;
+    transition: opacity 0.4s ease;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>The Slow Becoming</h1>
+    <div class="subtitle">An artistic interpretation of the automatic ramp sequence</div>
+    
+    <canvas id="canvas" width="960" height="520"></canvas>
+    
+    <div class="controls">
+      <button onclick="start()">Begin the Sequence</button>
+      <button onclick="pause()">Pause</button>
+      <button onclick="reset()">Reset</button>
+    </div>
+    
+    <div id="phase" class="phase"></div>
+  </div>
+
+<script>
+// Artistic, captivating version of the Automatic Ramp
+// Slow, organic, hypnotic particle system
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { alpha: true });
+
+const W = canvas.width;
+const H = canvas.height;
+
+const particles = [];
+let phase = 0; // 0-4 for the 5 steps
+let isRunning = false;
+let isPaused = false;
+let time = 0;
+let mouseX = W/2;
+let mouseY = H/2;
+
+// Poetic phase descriptions
+const phases = [
+  "The system remembers its first breath...",
+  "Gases begin their careful dance...",
+  "Power rises with quiet intention...",
+  "The field learns to hold itself...",
+  "Everything arrives together."
+];
+
+const phaseColors = [
+  { core: '#64748b', gas1: '#64748b', gas2: '#475569' },
+  { core: '#7dd3fc', gas1: '#38bdf8', gas2: '#0ea5e9' },
+  { core: '#a5b4fc', gas1: '#818cf8', gas2: '#6366f1' },
+  { core: '#c084fc', gas1: '#a855f7', gas2: '#7e22ce' },
+  { core: '#f0abfc', gas1: '#e879f9', gas2: '#c026d3' }
+];
+
+class Particle {
+  constructor(type) {
+    this.type = type; // 0 = CO2, 1 = CH4, 2 = energy
+    this.reset();
+  }
+  
+  reset() {
+    this.x = Math.random() * W;
+    this.y = H * 0.3 + Math.random() * H * 0.4;
+    this.vx = (Math.random() - 0.5) * 0.8;
+    this.vy = (Math.random() - 0.5) * 0.6;
+    this.size = Math.random() * 2.2 + 0.8;
+    this.life = Math.random() * 60 + 40;
+    this.hue = this.type === 0 ? 195 : (this.type === 1 ? 260 : 280);
+  }
+  
+  update(targetX, targetY, intensity, settled) {
+    // Gentle attraction to center + mouse
+    const dx = (targetX - this.x) * 0.012;
+    const dy = (targetY - this.y) * 0.012;
+    
+    this.vx += dx;
+    this.vy += dy;
+    
+    // Mouse interaction (very subtle for captivation)
+    const mdx = (mouseX - this.x) * 0.004;
+    const mdy = (mouseY - this.y) * 0.004;
+    this.vx += mdx * 0.6;
+    this.vy += mdy * 0.6;
+    
+    // When settled, particles calm and orbit beautifully
+    if (settled) {
+      const angle = Math.atan2(this.y - targetY, this.x - targetX);
+      this.vx += Math.cos(angle + 1.8) * 0.15;
+      this.vy += Math.sin(angle + 1.8) * 0.15;
+      this.vx *= 0.96;
+      this.vy *= 0.96;
+    } else {
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+    }
+    
+    this.x += this.vx;
+    this.y += this.vy;
+    
+    // Soft boundary behavior
+    if (this.x < 50 || this.x > W - 50) this.vx *= -0.7;
+    if (this.y < 80 || this.y > H - 80) this.vy *= -0.7;
+    
+    this.life -= 0.4;
+    if (this.life <= 0) this.reset();
+  }
+  
+  draw() {
+    const alpha = Math.max(0.15, this.life / 80);
+    ctx.fillStyle = `hsla(${this.hue}, 85%, 78%, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Create initial particles
+function initParticles() {
+  particles.length = 0;
+  for (let i = 0; i < 180; i++) {
+    const type = Math.floor(Math.random() * 3);
+    particles.push(new Particle(type));
+  }
+}
+
+let currentPhaseText = '';
+
+function updatePhase(newPhase) {
+  if (phase !== newPhase) {
+    phase = newPhase;
+    const el = document.getElementById('phase');
+    el.style.opacity = '0';
+    
+    setTimeout(() => {
+      el.textContent = phases[phase];
+      el.style.transition = 'opacity 800ms ease';
+      el.style.opacity = '1';
+    }, 300);
+  }
+}
+
+function drawCore(x, y, intensity, settled) {
+  const colors = phaseColors[phase];
+  
+  // Soft outer glow
+  const grad = ctx.createRadialGradient(x, y, 30, x, y, 95 + intensity * 25);
+  grad.addColorStop(0, colors.core + '55');
+  grad.addColorStop(0.5, colors.core + '22');
+  grad.addColorStop(1, 'transparent');
+  
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, 95 + intensity * 25, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Core
+  ctx.fillStyle = colors.core;
+  ctx.beginPath();
+  ctx.arc(x, y, 18 + intensity * 8, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Inner bright point
+  ctx.fillStyle = '#fff';
+  ctx.globalAlpha = 0.4 + intensity * 0.3;
+  ctx.beginPath();
+  ctx.arc(x, y, 6 + intensity * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+}
+
+function animate() {
+  ctx.fillStyle = 'rgba(10, 15, 30, 0.65)';
+  ctx.fillRect(0, 0, W, H);
+  
+  const centerX = W * 0.5;
+  const centerY = H * 0.48;
+  
+  const progress = phase / 4;
+  const intensity = Math.min(0.2 + progress * 0.9, 1.1);
+  const settled = phase > 0 && (Date.now() % 4200) > 2800; // artistic "settled" moments
+  
+  // Update and draw particles
+  for (let p of particles) {
+    let targetX = centerX;
+    let targetY = centerY;
+    
+    if (p.type === 0) targetX = centerX - 80; // CO2 side
+    if (p.type === 1) targetX = centerX + 80; // CH4 side
+    
+    p.update(targetX, targetY, intensity, settled);
+    p.draw();
+  }
+  
+  // Draw the artistic core
+  drawCore(centerX, centerY, intensity, settled);
+  
+  // Elegant tuner arcs (artistic representation)
+  ctx.strokeStyle = '#e0e7ff';
+  ctx.lineWidth = 1.5;
+  const baseAngle = -0.6 + progress * 1.2;
+  
+  for (let i = 0; i < 3; i++) {
+    const angle = baseAngle + i * 0.7 + Math.sin(time * 0.6 + i) * 0.08;
+    const length = 48 + i * 6;
+    
+    ctx.beginPath();
+    ctx.arc(centerX + Math.cos(angle) * length * 0.6, centerY + Math.sin(angle) * 18, length, angle - 0.9, angle + 0.9);
+    ctx.stroke();
+  }
+  
+  // Very subtle connecting energy lines when settled
+  if (settled) {
+    ctx.strokeStyle = 'rgba(224, 231, 255, 0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(centerX - 60 + i * 30, centerY - 20);
+      ctx.lineTo(centerX - 40 + i * 25, centerY + 25);
+      ctx.stroke();
+    }
+  }
+  
+  time += 0.016;
+  
+  // Progress through phases slowly
+  if (isRunning && !isPaused) {
+    const newPhase = Math.floor((time * 0.08) % 5);
+    if (newPhase !== phase) {
+      updatePhase(newPhase);
+    }
+  }
+  
+  requestAnimationFrame(animate);
+}
+
+function start() {
+  isRunning = true;
+  isPaused = false;
+  phase = 0;
+  time = 0;
+  document.getElementById('phase').textContent = phases[0];
+}
+
+function pause() {
+  isPaused = !isPaused;
+}
+
+function reset() {
+  isRunning = false;
+  isPaused = false;
+  phase = 0;
+  time = 0;
+  document.getElementById('phase').textContent = '';
+  initParticles();
+}
+
+// Mouse interaction for delight
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
+
+// Initialize
+initParticles();
+animate();
+
+// Gentle auto-start hint after a moment
+setTimeout(() => {
+  if (!isRunning) {
+    const hint = document.getElementById('phase');
+    if (hint) hint.textContent = 'Click "Begin the Sequence"';
+  }
+}, 4200);
+</script>
+</body>
+</html>
