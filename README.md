@@ -1,26 +1,21 @@
 **Automatic Ramp Demo**
 
-Two visualizations of Dimitri Orfanos' Automatic Ramp Program (a LabVIEW SubVI for controlled ramping of a pilot microwave plasma reactor):
+Two versions of the animation for Dimitri Orfanos' "Automatic Ramp Program" case study:
 
-### 1. Artistic Version (Main)
+### Artistic Version (Recommended)
 
-A captivating, non-technical animation that interprets the ramping process as an elegant, almost living system coming into harmony.
+A more poetic, visually captivating interpretation using organic particle flows and elegant motion.
 
-- Flowing particle streams (representing gas flows)
-- A central resonant core that grows with power
-- Graceful, synchronized elements for tuning
-- Poetic, slow, mesmerizing motion
+**Live Demo:** https://bsudol-coder.github.io/automatic-ramp-demo/
 
-**Live:** https://bsudol-coder.github.io/automatic-ramp-demo/
+### Technical Version
 
-### 2. Technical Version
+The clean, precise engineering-style visualization that directly matches the description and logic on the original project page (CSV-driven, settling-tolerant ramp sequence).
 
-A clean, precise engineering-style visualization that directly illustrates the CSV-driven settling logic described in the original project case study.
-
-**View:** https://bsudol-coder.github.io/automatic-ramp-demo/technical.html
+**Live Demo:** https://bsudol-coder.github.io/automatic-ramp-demo/technical.html
 
 ---
 
-Both versions are self-contained single HTML files and can be easily embedded or linked from the original project page.
+Both are single self-contained HTML files.
 
-Created for preview and inspiration.
+If the technical version still doesn't load, please try a hard refresh (Ctrl/Cmd + Shift + R) or let me know the exact error.
