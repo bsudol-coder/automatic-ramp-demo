@@ -1,21 +1,13 @@
 **Automatic Ramp Demo**
 
-Two versions of the animation for Dimitri Orfanos' "Automatic Ramp Program" case study:
+**Important:** The technical version is currently having upload issues in this repo.
 
-### Artistic Version (Recommended)
+### Current Status
+- **Artistic version** (working): https://bsudol-coder.github.io/automatic-ramp-demo/
+- **Technical version**: Not reliably working from this repo right now.
 
-A more poetic, visually captivating interpretation using organic particle flows and elegant motion.
+**Quick fix for the technical version:**
+Open this raw file and save it locally, then drag it to https://app.netlify.com/drop for an instant working link:
+https://raw.githubusercontent.com/bsudol-coder/automatic-ramp-demo/main/technical.html
 
-**Live Demo:** https://bsudol-coder.github.io/automatic-ramp-demo/
-
-### Technical Version
-
-The clean, precise engineering-style visualization that directly matches the description and logic on the original project page (CSV-driven, settling-tolerant ramp sequence).
-
-**Live Demo:** https://bsudol-coder.github.io/automatic-ramp-demo/technical.html
-
----
-
-Both are single self-contained HTML files.
-
-If the technical version still doesn't load, please try a hard refresh (Ctrl/Cmd + Shift + R) or let me know the exact error.
+I will fix the proper hosting of the technical version shortly.
